@@ -3,69 +3,48 @@ package com.soclosetoheaven.common.net.connections;
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-public class UDPServerConnection implements SimpleConnection<Pair<Request, InetSocketAddress>, Pair<Response, InetSocketAddress>> {
+public class UDPServerConnection implements SimpleConnection<Request, Response> {
 
 
     private final DatagramSocket socket;
 
-    //private final LinkedHashSet<InetSocketAddress> clients; // K - address, V - port
 
     private byte[] buffer;
 
-    private boolean running;
+    private InetSocketAddress client;
+
+
 
     public UDPServerConnection(int port) throws SocketException {
         socket = new DatagramSocket(port);
         buffer = new byte[BUFFER_SIZE];
+        //socket.setSoTimeout(CONNECTION_TIMEOUT);
     }
 
-    @Override
-    public void start() {
-        running = true;
-    }
 
     @Override
-    public Pair<Request, InetSocketAddress> waitAndGetData() throws IOException {
+    public Request waitAndGetData() throws IOException {
         ArrayList<byte[]> buffers = new ArrayList<>();
-        InetSocketAddress address;
         do {
             clearBuffer();
             DatagramPacket packet = new DatagramPacket(buffer, MAX_PACKET_SIZE);
             socket.receive(packet);
-            address = new InetSocketAddress(packet.getAddress(), packet.getPort()); // временный костыль
+            connect(packet.getAddress().getHostAddress(), packet.getPort()); // временный костыль
             buffers.add(buffer);
         } while (buffer.length == MAX_PACKET_SIZE);
-        byte[] data = new byte[buffers.size() * BUFFER_SIZE];
-        int currentPosition = 0;
-        for (byte[] i : buffers) {
-            for (byte j : i) {
-                data[currentPosition] = j;
-                currentPosition++;
-            }
-        }
-        return new ImmutablePair<>(SerializationUtils.deserialize(data), address);
+        byte[] data = transformPackagesToData(buffers);
+        return SerializationUtils.deserialize(data);
     }
 
     @Override
-    public void sendData(Pair<Response, InetSocketAddress> pair) throws IOException{ // сделать нормальную посылку данных
-        Response response = pair.getLeft();
-        InetSocketAddress client = pair.getRight();
-        byte[] data = SerializationUtils.serialize(response);
-        byte[][] packets = new byte[(int) Math.ceil(data.length / (double) MAX_PACKET_SIZE)][MAX_PACKET_SIZE];
-
-        int currentPosition = 0;
-        for (int i = 0; i < packets.length; ++i) {
-            packets[i] = Arrays.copyOfRange(data, currentPosition, currentPosition + MAX_PACKET_SIZE);
-            currentPosition += MAX_PACKET_SIZE;
-        }
+    public void sendData(Response response) throws IOException{
+        byte[][] packets = transformDataToPackages(response);
 
         for (byte[] pac : packets) {
             DatagramPacket packet = new DatagramPacket(
@@ -75,6 +54,7 @@ public class UDPServerConnection implements SimpleConnection<Pair<Request, InetS
             );
 
             socket.send(packet);
+            disconnect();
         }
 
     }
@@ -83,4 +63,26 @@ public class UDPServerConnection implements SimpleConnection<Pair<Request, InetS
         buffer = new byte[BUFFER_SIZE];
     }
 
+
+    @Override
+    public void connect(String adr, int port) throws IOException {
+        if (!socket.isConnected()) {
+            this.client = new InetSocketAddress(adr, port);
+            this.socket.connect(client);
+        }
+    }
+
+    @Override
+    public void disconnect() throws IOException {
+        try {
+            this.socket.disconnect();
+            this.client = null;
+        } catch (UncheckedIOException e) {
+            throw new IOException(e);
+        }
+    }
+
+    public InetSocketAddress getClient() {
+        return client;
+    }
 }

@@ -5,6 +5,7 @@ import com.soclosetoheaven.common.exceptions.InvalidRequestException;
 import com.soclosetoheaven.common.io.BasicIO;
 import com.soclosetoheaven.common.models.Dragon;
 import com.soclosetoheaven.common.net.factories.RequestFactory;
+import com.soclosetoheaven.common.net.factories.ResponseFactory;
 import com.soclosetoheaven.common.net.messaging.*;
 
 public class AddCommand extends AbstractCommand{
@@ -24,9 +25,11 @@ public class AddCommand extends AbstractCommand{
         try {
             Dragon dragon = ((RequestBodyWithDragon) requestBody).getDragon();
             cm.add(dragon);
-            return new Response("%s - %s".formatted(dragon, "added in collection"));
+            return ResponseFactory.createResponse(
+                    "%s - %s".formatted(dragon, "added in collection")
+            );
         } catch (ClassCastException e) {
-            return new ResponseWithException(
+            return ResponseFactory.createResponseWithException(
                     new InvalidRequestException(e.getMessage())
             );
         }

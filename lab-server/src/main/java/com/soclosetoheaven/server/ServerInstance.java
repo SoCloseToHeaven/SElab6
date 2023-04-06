@@ -8,8 +8,6 @@ import com.soclosetoheaven.common.io.BasicIO;
 import com.soclosetoheaven.common.net.connections.UDPServerConnection;
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,7 +31,7 @@ public class ServerInstance{
         this.io = io;
     }
 
-    public void run() {
+    public void run(){
         try {
             fcm = new FileCollectionManager(filePath);
             fcm.open();
@@ -45,9 +43,8 @@ public class ServerInstance{
         io.writeln(fcm.toString());
         while (ServerApp.getState()) {
             try {
-                Pair<Request, InetSocketAddress> pair = connection.waitAndGetData();
-                InetSocketAddress client = pair.getRight();
-                Request request = pair.getLeft();
+                Request request = connection.waitAndGetData();
+                InetSocketAddress client = connection.getClient();
                 ServerApp.LOGGER.log(Level.INFO,
                         "GOT REQUEST - %s - CLIENT - %s:%s".
                                 formatted(
@@ -57,7 +54,7 @@ public class ServerInstance{
                                 )
                 );
                 Response response = commandManager.manage(request);
-                connection.sendData(new ImmutablePair<>(response , client));
+                connection.sendData(response);
                 fcm.save();
             } catch (IOException e) {
                 ServerApp.LOGGER.severe("Exception: " + e.getMessage());

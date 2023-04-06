@@ -10,10 +10,8 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class UDPClientConnection implements SimpleConnection<Response, Request> {
-
 
     private final DatagramChannel channel;
 
@@ -21,57 +19,62 @@ public class UDPClientConnection implements SimpleConnection<Response, Request> 
 
     private final ByteBuffer buffer;
 
-    private boolean running;
 
     public UDPClientConnection(String addr, int port) throws IOException {
         this.address = new InetSocketAddress(addr, port);
-        channel = DatagramChannel.open();
+        channel = DatagramChannel.open().bind(null);
+        connect(addr, port);
         buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        channel.configureBlocking(false); // non-blocking mode
+        channel.socket().setSoTimeout(CONNECTION_TIMEOUT);
+        System.out.println(channel.isConnected());
     }
 
 
-    @Override
-    public void start() {
-        running = true;
-    }
 
     @Override
-    public Response waitAndGetData() throws IOException { // сделать нормальный приём данных, потому что сейчас хуйня
+    public Response waitAndGetData() throws IOException {
         ArrayList<byte[]> buffers = new ArrayList<>();
         byte[] bufferArray;
         do {
-            buffer.clear();
-            channel.receive(buffer);
-            bufferArray = buffer.array();
+            bufferArray = getData();
             buffers.add(bufferArray);
         } while (bufferArray.length == MAX_PACKET_SIZE);
-        byte[] data = new byte[buffers.size() * BUFFER_SIZE];
-        int currentPosition = 0;
-        for (byte[] i : buffers) {
-            for (byte j : i) {
-                data[currentPosition] = j;
-                currentPosition++;
-            }
-        }
-
+        byte[] data = transformPackagesToData(buffers);
         return SerializationUtils.deserialize(data);
+    }
+
+    public byte[] getData() throws IOException { // method is needed to provide non-blocking channel mode
+        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        SocketAddress address = null;
+        long timeoutChecker = System.currentTimeMillis() + CONNECTION_TIMEOUT;
+        // var is needed to check connection for timeout
+        while (address == null && (timeoutChecker -= System.currentTimeMillis()) >= 0) {
+            address = channel.receive(buffer);
+        }
+        if (timeoutChecker < 0)
+            throw new IOException("Server connection timeout!");
+        return buffer.array();
     }
 
     @Override
     public void sendData(Request request) throws IOException{
-        byte[] data = SerializationUtils.serialize(request);
-        byte[][] packets = new byte[(int) Math.ceil(data.length / (double) MAX_PACKET_SIZE)][MAX_PACKET_SIZE];
-        int currentPosition = 0;
-        for (int i = 0; i < packets.length; ++i) {
-            packets[i] = Arrays.copyOfRange(data, currentPosition, currentPosition + MAX_PACKET_SIZE);
-            currentPosition += MAX_PACKET_SIZE;
-        }
-
+        byte[][] packets = transformDataToPackages(request);
         for (byte[] bytePacket : packets) {
             buffer.clear();
             buffer.put(bytePacket);
             buffer.flip();
             channel.send(buffer, address);
         }
+    }
+
+    @Override
+    public void connect(String adr, int port) throws IOException {
+        this.channel.connect(new InetSocketAddress(adr,port));
+    }
+
+    @Override
+    public void disconnect() throws IOException{
+        this.channel.disconnect();
     }
 }

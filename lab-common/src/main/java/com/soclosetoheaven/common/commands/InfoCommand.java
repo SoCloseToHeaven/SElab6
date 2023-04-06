@@ -4,7 +4,6 @@ import com.soclosetoheaven.common.collectionmanagers.FileCollectionManager;
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.RequestBody;
 import com.soclosetoheaven.common.net.messaging.Response;
-import com.soclosetoheaven.common.util.TerminalColors;
 
 public class InfoCommand extends AbstractCommand{
 

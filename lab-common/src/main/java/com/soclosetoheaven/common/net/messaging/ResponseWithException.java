@@ -25,6 +25,6 @@ public class ResponseWithException extends Response {
 
     @Override
     public String toString() {
-        return "%s - %s".formatted(description, e.getMessage());
+        return "%s - %s".formatted(getDescription(), e.getMessage());
     }
 }
