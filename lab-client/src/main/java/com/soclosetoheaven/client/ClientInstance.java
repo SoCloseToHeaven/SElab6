@@ -1,11 +1,13 @@
 package com.soclosetoheaven.client;
 
 import com.soclosetoheaven.common.commandmanagers.ClientCommandManager;
+import com.soclosetoheaven.common.exceptions.ExecutingScriptException;
 import com.soclosetoheaven.common.exceptions.InvalidCommandArgumentException;
 import com.soclosetoheaven.common.exceptions.UnknownCommandException;
 import com.soclosetoheaven.common.io.BasicIO;
 
 import com.soclosetoheaven.common.net.connections.UDPClientConnection;
+import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
 import com.soclosetoheaven.common.util.TerminalColors;
 
@@ -39,16 +41,20 @@ public class ClientInstance {
 
     public void run() {
         String input;
-        while (((input = io.read(INPUT_PREFIX)) != null) && !input.equalsIgnoreCase("exit")) {
+        while ((input = io.read(INPUT_PREFIX)) != null) {
             try {
-                connection.sendData(commandManager.manage(input));
+                Request request = commandManager.manage(input);
+                if (request == null)
+                    continue;
+                connection.sendData(request);
                 Response response = connection.waitAndGetData();
                 io.writeln(
                         TerminalColors.setColor(response.toString(), TerminalColors.BLUE)
                 );
             } catch (IOException |
                      UnknownCommandException |
-                     InvalidCommandArgumentException
+                     InvalidCommandArgumentException |
+                     ExecutingScriptException
                     e) {
                 io.writeln(TerminalColors.setColor(e.getMessage(), TerminalColors.RED));
             }

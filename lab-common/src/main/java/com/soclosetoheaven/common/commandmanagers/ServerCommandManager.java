@@ -46,7 +46,6 @@ public class ServerCommandManager implements CommandManager<Response, Request>{
                 new ClearCommand(cm),
                 new RemoveByIDCommand(cm),
                 new RemoveAtCommand(cm),
-                new HelpCommand(scm),
                 new GroupCountingByCreationDateCommand(cm),
                 new UpdateCommand(cm, null)
         ).forEach(scm::addCommand);

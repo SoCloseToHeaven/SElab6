@@ -40,7 +40,7 @@ public class UDPServerConnection implements SimpleConnection<Pair<Request, InetS
             clearBuffer();
             DatagramPacket packet = new DatagramPacket(buffer, MAX_PACKET_SIZE);
             socket.receive(packet);
-            address = new InetSocketAddress(packet.getAddress(), packet.getPort());
+            address = new InetSocketAddress(packet.getAddress(), packet.getPort()); // временный костыль
             buffers.add(buffer);
         } while (buffer.length == MAX_PACKET_SIZE);
         byte[] data = new byte[buffers.size() * BUFFER_SIZE];

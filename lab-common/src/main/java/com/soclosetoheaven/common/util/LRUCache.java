@@ -46,12 +46,13 @@ public class LRUCache<T> {
         this.array = new ArrayList<>();
     }
 
-    /**
-     * returns inner collection
-     * @return {@link #array}
-     */
-    public ArrayList<T> getArray() {
-        return this.array;
+    @Override
+    public String toString() {
+        if (size() == 0)
+            return "Empty";
+        StringBuilder builder = new StringBuilder();
+        this.array.forEach(elem -> builder.append("%s ".formatted(elem.toString())));
+        return builder.toString();
     }
 
     /**

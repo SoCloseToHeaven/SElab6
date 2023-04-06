@@ -21,6 +21,9 @@ public class BasicIO {
      */
     private final BufferedWriter writer;
 
+    private final BufferedWriter errWriter;
+
+
     /**
      * default BasicClientIO constructor
      */
@@ -37,6 +40,7 @@ public class BasicIO {
     public BasicIO(InputStream in, OutputStream out) {
         this.stack.add(new BufferedReader(new InputStreamReader(in)));
         this.writer = new BufferedWriter(new OutputStreamWriter(out));
+        this.errWriter = new BufferedWriter(new OutputStreamWriter(System.err));
     }
 
 
@@ -49,7 +53,7 @@ public class BasicIO {
             writer.write(obj.toString());
             writer.flush();
         } catch (IOException e) {
-            System.err.printf("%s: %s%n", "Something went wrong with userIO", e.getMessage());
+            writeErr("%s: %s%n".formatted("Something went wrong with userIO", e.getMessage()));
             System.exit(-1);
         } catch (NullPointerException e) {
             this.write("null");
@@ -66,7 +70,7 @@ public class BasicIO {
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
-            System.err.printf("%s: %s%n", "Something went wrong with userIO", e.getMessage());
+            writeErr("%s: %s%n".formatted("Something went wrong with userIO", e.getMessage()));
             System.exit(-1);
         } catch (NullPointerException e) {
             this.writeln("null");
@@ -93,12 +97,12 @@ public class BasicIO {
                 break;
             } while (stack.size() > 0);
             if (stack.size() == 0) {
-                writeln(TerminalColors.setColor("All streams ended, stopping program", TerminalColors.RED));
+                writeErr("All streams ended, stopping program");
                 System.exit(-1);
             }
             return input;
         } catch (IOException e) {
-            return  "%s: %s".formatted("Something went wrong with userIO", e.getMessage());
+            return read();
         }
     }
 
@@ -131,7 +135,7 @@ public class BasicIO {
             stack.getLast().close();
             remove();
         } catch (IOException e) {
-            System.err.printf("%s: %s%n", "Something went wrong with userIO when closing stream", e.getMessage());
+            writeErr("%s: %s%n".formatted("Something went wrong with userIO when closing stream", e.getMessage()));
             System.exit(-1);
         }
     }
@@ -144,11 +148,11 @@ public class BasicIO {
         stack.removeLast();
     }
 
-
+    // костыльный момент, надо переделать
     public String stdRead() {
-        BufferedReader stdReader = getFirstReader();
         String input;
         try {
+            BufferedReader stdReader = getFirstReader();
             input = stdReader.readLine();
             if (input == null) {
                 stdReader.close();
@@ -156,7 +160,7 @@ public class BasicIO {
             }
             return input;
         } catch (IOException e) {
-            writeln(TerminalColors.setColor(e.getMessage(), TerminalColors.RED));
+            writeErr(e.getMessage());
             System.exit(-1);
         }
         return "Something went wrong with userIO";
@@ -175,5 +179,18 @@ public class BasicIO {
     public String stdReadLineWithNull(String message) {
         this.write(message);
         return this.stdReadLineWithNull();
+    }
+
+    public void writeErr(Object obj) {
+        try {
+            errWriter.write(TerminalColors.setColor(
+                    obj.toString(),
+                    TerminalColors.RED)
+            );
+            errWriter.newLine();
+            errWriter.flush();
+        } catch (IOException e) {
+            System.exit(-33);
+        }
     }
 }

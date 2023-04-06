@@ -10,6 +10,12 @@ public class UnknownCommandException extends RuntimeException{
      */
 
     public UnknownCommandException(String name) {
-        super("There is no command with name: %s".formatted(name));
+        super(
+                "%s: %s - %s".formatted(
+                        "There is no command with name",
+                        name,
+                        "Type {help} to get list of commands"
+                )
+        );
     }
 }

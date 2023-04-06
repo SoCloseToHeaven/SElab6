@@ -23,4 +23,9 @@ abstract public class AbstractCommand {
     }
 
     abstract String getUsage();
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

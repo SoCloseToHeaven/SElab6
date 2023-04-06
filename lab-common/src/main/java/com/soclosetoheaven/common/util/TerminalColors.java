@@ -5,10 +5,10 @@ package com.soclosetoheaven.common.util;
  */
 public enum TerminalColors {
     GREEN("\u001b[32m"),
-    RED("\u001b[31m"),
-    BLUE("\u001b[34m"),
-    CYAN("\u001B[36m"),
-    RESET("\u001b[0m");
+    RED("\u001b[31m"), // default exception color
+    BLUE("\u001b[34m"), // default server response color
+    CYAN("\u001B[36m"), // default client-side command output
+    RESET("\u001b[0m"); // default color
 
 
     private final String ansiColor;
