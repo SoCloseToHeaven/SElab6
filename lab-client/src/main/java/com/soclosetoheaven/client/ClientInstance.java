@@ -1,6 +1,7 @@
 package com.soclosetoheaven.client;
 
 import com.soclosetoheaven.common.commandmanagers.ClientCommandManager;
+import com.soclosetoheaven.common.exceptions.InvalidCommandArgumentException;
 import com.soclosetoheaven.common.exceptions.UnknownCommandException;
 import com.soclosetoheaven.common.io.BasicIO;
 
@@ -38,13 +39,16 @@ public class ClientInstance {
 
     public void run() {
         String input;
-        while (((input = io.read(INPUT_PREFIX)) != null) && !input.toLowerCase().equals("exit")) {
+        while (((input = io.read(INPUT_PREFIX)) != null) && !input.equalsIgnoreCase("exit")) {
             try {
                 connection.sendData(commandManager.manage(input));
                 Response response = connection.waitAndGetData();
-                io.writeln(response.toString());
+                io.writeln(
+                        TerminalColors.setColor(response.toString(), TerminalColors.BLUE)
+                );
             } catch (IOException |
-                     UnknownCommandException
+                     UnknownCommandException |
+                     InvalidCommandArgumentException
                     e) {
                 io.writeln(TerminalColors.setColor(e.getMessage(), TerminalColors.RED));
             }

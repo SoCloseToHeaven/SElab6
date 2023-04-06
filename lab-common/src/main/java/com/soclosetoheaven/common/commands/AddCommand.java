@@ -21,18 +21,27 @@ public class AddCommand extends AbstractCommand{
 
     @Override
     public Response execute(RequestBody requestBody) {
-        if (requestBody instanceof RequestBodyWithDragon) {
+        try {
             Dragon dragon = ((RequestBodyWithDragon) requestBody).getDragon();
             cm.add(dragon);
             return new Response("%s - %s".formatted(dragon, "added in collection"));
+        } catch (ClassCastException e) {
+            return new ResponseWithException(
+                    new InvalidRequestException(e.getMessage())
+            );
         }
-        return new ResponseWithException(
-                "ATTENTION",
-                new InvalidRequestException("r"));
     }
 
     @Override
     public Request toRequest(String[] args) {
         return RequestFactory.createRequestWithDragon(getName(), null, io);
+    }
+
+    @Override
+    public String getUsage() {
+        return "%s%s".formatted(
+                "add {element}",
+                " - adds new collection element, fill the fields with values line by line"
+        );
     }
 }

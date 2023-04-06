@@ -48,5 +48,5 @@ public interface CollectionManager<T> {
      * @return true if successfully removed, false if else
      */
 
-    boolean removeIf(long id);
+    void removeByID(long id);
 }

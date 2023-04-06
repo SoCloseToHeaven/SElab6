@@ -1,11 +1,8 @@
 package com.soclosetoheaven.common.commandmanagers;
 
 import com.soclosetoheaven.common.collectionmanagers.FileCollectionManager;
-import com.soclosetoheaven.common.commands.AbstractCommand;
-import com.soclosetoheaven.common.commands.AddCommand;
-import com.soclosetoheaven.common.commands.InfoCommand;
-import com.soclosetoheaven.common.commands.SortCommand;
-import com.soclosetoheaven.common.io.BasicIO;
+import com.soclosetoheaven.common.commands.*;
+
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
 
@@ -22,7 +19,7 @@ public class ServerCommandManager implements CommandManager<Response, Request>{
     }
 
     @Override
-    public Response manage(Request request) {
+    public Response manage(Request request){
         return commands.get(request.getCommandName()).execute(request.getBody());
     }
 
@@ -41,7 +38,17 @@ public class ServerCommandManager implements CommandManager<Response, Request>{
         Arrays.asList(
                 new InfoCommand(cm),
                 new AddCommand(cm, null),
-                new SortCommand(cm)
+                new SortCommand(cm),
+                new RemoveAllByAgeCommand(cm),
+                new ShowCommand(cm),
+                new SortCommand(cm),
+                new CountLessThanAgeCommand(cm),
+                new ClearCommand(cm),
+                new RemoveByIDCommand(cm),
+                new RemoveAtCommand(cm),
+                new HelpCommand(scm),
+                new GroupCountingByCreationDateCommand(cm),
+                new UpdateCommand(cm, null)
         ).forEach(scm::addCommand);
         return scm;
     }

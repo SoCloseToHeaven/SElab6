@@ -1,8 +1,8 @@
 package com.soclosetoheaven.common.exceptions;
 
 import java.io.Serial;
-
-public class InvalidCommandArgumentException extends Exception{
+//client-side exception
+public class InvalidCommandArgumentException extends RuntimeException{
 
     @Serial
     private static final long serialVersionUID = -3657872;

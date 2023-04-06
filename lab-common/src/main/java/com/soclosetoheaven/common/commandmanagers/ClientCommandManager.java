@@ -1,9 +1,6 @@
 package com.soclosetoheaven.common.commandmanagers;
 
-import com.soclosetoheaven.common.commands.AbstractCommand;
-import com.soclosetoheaven.common.commands.AddCommand;
-import com.soclosetoheaven.common.commands.InfoCommand;
-import com.soclosetoheaven.common.commands.SortCommand;
+import com.soclosetoheaven.common.commands.*;
 import com.soclosetoheaven.common.exceptions.UnknownCommandException;
 import com.soclosetoheaven.common.io.BasicIO;
 import com.soclosetoheaven.common.net.messaging.Request;
@@ -49,7 +46,17 @@ public class ClientCommandManager implements CommandManager<Request, String> {
         Arrays.asList(
                 new InfoCommand(null),
                 new AddCommand(null, io),
-                new SortCommand(null)
+                new SortCommand(null),
+                new RemoveAllByAgeCommand(null),
+                new ShowCommand(null),
+                new ShowCommand(null),
+                new CountLessThanAgeCommand(null),
+                new ClearCommand(null),
+                new RemoveByIDCommand(null),
+                new RemoveAtCommand(null),
+                new HelpCommand(null),
+                new GroupCountingByCreationDateCommand(null),
+                new UpdateCommand(null, io)
                 ).forEach(cm::addCommand);
         return cm;
     }

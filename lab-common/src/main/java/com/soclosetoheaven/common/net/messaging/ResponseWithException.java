@@ -1,6 +1,5 @@
 package com.soclosetoheaven.common.net.messaging;
 
-import com.soclosetoheaven.common.net.messaging.Response;
 
 import java.io.Serial;
 
@@ -9,9 +8,14 @@ public class ResponseWithException extends Response {
     @Serial
     private final static long serialVersionUID = 9513113;
 
-    private Exception e; // Exception implements serializable
+    private final Exception e; // Exception implements serializable
     public ResponseWithException(String description, Exception e) {
         super(description);
+        this.e = e;
+    }
+
+    public ResponseWithException(Exception e) {
+        super("SERVER RESPONDED WITH EXCEPTION");
         this.e = e;
     }
 

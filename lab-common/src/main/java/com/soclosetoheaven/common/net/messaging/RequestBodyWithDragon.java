@@ -1,7 +1,6 @@
 package com.soclosetoheaven.common.net.messaging;
 
 import com.soclosetoheaven.common.models.Dragon;
-import com.soclosetoheaven.common.net.messaging.RequestBody;
 
 import java.io.Serial;
 

@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 public final class ServerApp {
 
 
-    public static final Logger LOGGER = Logger.getLogger(ServerApp.class.getName());
+    public static final Logger LOGGER = Logger.getAnonymousLogger();
     private ServerApp() {
         throw new UnsupportedOperationException("This is an utility class and can not be instantiated");
     }

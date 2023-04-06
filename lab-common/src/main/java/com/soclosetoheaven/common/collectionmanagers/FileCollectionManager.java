@@ -7,9 +7,9 @@ import com.soclosetoheaven.common.util.JSONFileManager;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 /**
  * This class is used to organise working with collection, that could be saved in file or loaded from it
@@ -55,13 +55,7 @@ public class FileCollectionManager implements SaveableCollectionManager<Dragon>{
 
     @Override
     public void sort() { // sorting by ID
-        this.collection = collection.stream().sorted((o1, o2) -> {
-            if (o1.getID() < o2.getID())
-                return -1;
-            else if (o1.getID().equals(o2.getID()))
-                return 0;
-            return 1;
-        }).collect(Collectors.toCollection(ArrayList::new));
+        Collections.sort(this.collection);
     }
 
     @Override
@@ -75,14 +69,16 @@ public class FileCollectionManager implements SaveableCollectionManager<Dragon>{
     }
 
     @Override
-    public boolean removeIf(long id) {
-        return collection.removeIf(element -> {
+    public void removeByID(long id) {
+        boolean flag = collection.removeIf(element -> {
             if (element.getID() == id) {
                 Dragon.VALIDATOR.removeUsedID(id);
                 return true;
             }
             return false;
         });
+        if (!flag)
+            throw new NoSuchElementException("No such element with ID: %s".formatted(id));
     }
 
     @Override
@@ -105,6 +101,10 @@ public class FileCollectionManager implements SaveableCollectionManager<Dragon>{
     public String toString() {
         return "%s; %s - %d; %s - %s".formatted(
                 "Collection type - ArrayList", "current size", collection.size(), "Initial data", initDate.toString());
+    }
+
+    public void setCollection(ArrayList<Dragon> collection) {
+        this.collection = collection;
     }
 }
 

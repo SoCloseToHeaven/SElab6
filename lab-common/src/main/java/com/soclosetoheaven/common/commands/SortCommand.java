@@ -27,4 +27,12 @@ public class SortCommand extends AbstractCommand{
     public Request toRequest(String[] args) {
         return super.toRequest(null);
     }
+
+    @Override
+    public String getUsage() {
+        return "%s%s".formatted(
+                "sort",
+                " - sorts the collection in ascending order by ID"
+        );
+    }
 }

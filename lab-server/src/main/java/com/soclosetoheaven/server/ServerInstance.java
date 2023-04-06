@@ -12,7 +12,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
@@ -40,7 +39,7 @@ public class ServerInstance {
             System.exit(-1);
         }
         System.out.println(fcm.toString());
-        while (true) {
+         while (true) {
             try {
                 Pair<Request, InetSocketAddress> pair = connection.waitAndGetData();
                 InetSocketAddress client = pair.getRight();

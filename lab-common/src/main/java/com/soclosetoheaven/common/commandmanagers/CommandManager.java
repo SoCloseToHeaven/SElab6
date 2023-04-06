@@ -2,6 +2,7 @@ package com.soclosetoheaven.common.commandmanagers;
 
 import com.soclosetoheaven.common.commands.AbstractCommand;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface CommandManager<ReturningType, ManagingType> {

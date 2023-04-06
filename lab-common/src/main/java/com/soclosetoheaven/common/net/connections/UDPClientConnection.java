@@ -2,11 +2,9 @@ package com.soclosetoheaven.common.net.connections;
 
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
-import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
-import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -21,7 +19,7 @@ public class UDPClientConnection implements SimpleConnection<Response, Request> 
 
     private final SocketAddress address;
 
-    private ByteBuffer buffer;
+    private final ByteBuffer buffer;
 
     private boolean running;
 

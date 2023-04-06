@@ -21,4 +21,6 @@ abstract public class AbstractCommand {
     public String getName() {
         return name;
     }
+
+    abstract String getUsage();
 }

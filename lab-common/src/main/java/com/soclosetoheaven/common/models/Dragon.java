@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 
-public class Dragon implements Serializable {
+public class Dragon implements Serializable, Comparable<Dragon> {
     /**
      * Default validator for dragon
      */
@@ -141,6 +141,15 @@ public class Dragon implements Serializable {
                 setCave(depth, numberOfTreasures);
     }
 
+    @Override
+    public int compareTo(Dragon o) {
+        if (this.getID() < o.getID())
+            return -1;
+        else if (this.getID().equals(o.getID()))
+            return 0;
+        return 1;
+    }
+
     public DragonCave getCave() {return this.cave;}
 
     public Dragon setCave(long depth, int numberOfTreasures) {
@@ -161,6 +170,13 @@ public class Dragon implements Serializable {
                         String.valueOf(getType()),
                         String.valueOf(getCave()),
                         String.valueOf(getCoordinates()));
+    }
+
+    public void setID(Long id) {
+        VALIDATOR.validateID(id);
+        VALIDATOR.removeUsedID(this.id);
+        VALIDATOR.addUsedID(id);
+        this.id = id;
     }
 
     public static class Validator implements AbstractValidator<Dragon> {
@@ -288,6 +304,10 @@ public class Dragon implements Serializable {
 
         public void removeUsedID(Long id) {
             usedID.remove(id);
+        }
+
+        public void addUsedID(Long id) {
+            usedID.add(id);
         }
     }
 }

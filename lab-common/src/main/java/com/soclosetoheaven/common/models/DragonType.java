@@ -13,13 +13,7 @@ public enum DragonType implements Serializable {
 
     FIRE(4);
 
-    /**
-     * parses String to DragonType
-     * @param line value to parse
-     * @return DragonType's value
-     * @throws UnsupportedOperationException if value is invalid
-     */
-    private int number;
+    private final int number;
     @Serial
     private static final long serialVersionUID = -551936780166L;
     DragonType(int number) {
