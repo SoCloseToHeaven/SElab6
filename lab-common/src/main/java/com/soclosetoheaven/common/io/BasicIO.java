@@ -191,6 +191,8 @@ public class BasicIO {
             errWriter.flush();
         } catch (IOException e) {
             System.exit(-33);
+        } catch (NullPointerException e) {
+            writeErr("EXCEPTION MESSAGE IS NULL");
         }
     }
 }

@@ -12,6 +12,7 @@ import com.soclosetoheaven.common.net.messaging.Response;
 import com.soclosetoheaven.common.util.TerminalColors;
 
 import java.io.IOException;
+import java.net.PortUnreachableException;
 
 /**
  * class used for interaction of user with console
@@ -51,12 +52,13 @@ public class ClientInstance {
                 io.writeln(
                         TerminalColors.setColor(response.toString(), TerminalColors.BLUE)
                 );
+            } catch (PortUnreachableException e){
+                io.writeErr("UNABLE TO CONNECT TO SERVER!");
             } catch (IOException |
                      UnknownCommandException |
                      InvalidCommandArgumentException |
-                     ExecutingScriptException
-                    e) {
-                io.writeln(TerminalColors.setColor(e.getMessage(), TerminalColors.RED));
+                     ExecutingScriptException e) {
+                io.writeErr(e.getMessage());
             }
         }
     }

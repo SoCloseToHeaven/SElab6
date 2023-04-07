@@ -23,6 +23,7 @@ public class UDPServerConnection implements SimpleConnection<Request, Response> 
 
     public UDPServerConnection(int port) throws SocketException {
         socket = new DatagramSocket(port);
+        socket.setReuseAddress(true); // needed for IP multicasting
         buffer = new byte[BUFFER_SIZE];
         //socket.setSoTimeout(CONNECTION_TIMEOUT);
     }

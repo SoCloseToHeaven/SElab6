@@ -55,9 +55,10 @@ public class ServerInstance{
                 );
                 Response response = commandManager.manage(request);
                 connection.sendData(response);
-                fcm.save();
             } catch (IOException e) {
                 ServerApp.LOGGER.severe("Exception: " + e.getMessage());
+            } finally {
+                fcm.save();
             }
         }
 

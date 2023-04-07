@@ -22,12 +22,12 @@ public class UDPClientConnection implements SimpleConnection<Response, Request> 
 
     public UDPClientConnection(String addr, int port) throws IOException {
         this.address = new InetSocketAddress(addr, port);
-        channel = DatagramChannel.open().bind(null);
+        channel = DatagramChannel.open();
         connect(addr, port);
         buffer = ByteBuffer.allocate(BUFFER_SIZE);
         channel.configureBlocking(false); // non-blocking mode
         channel.socket().setSoTimeout(CONNECTION_TIMEOUT);
-        System.out.println(channel.isConnected());
+        //System.out.println(channel.isConnected());
     }
 
 
@@ -49,7 +49,7 @@ public class UDPClientConnection implements SimpleConnection<Response, Request> 
         SocketAddress address = null;
         long timeoutChecker = System.currentTimeMillis() + CONNECTION_TIMEOUT;
         // var is needed to check connection for timeout
-        while (address == null && (timeoutChecker -= System.currentTimeMillis()) >= 0) {
+        while (address == null && (timeoutChecker - System.currentTimeMillis()) >= 0) {
             address = channel.receive(buffer);
         }
         if (timeoutChecker < 0)
