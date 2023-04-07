@@ -7,7 +7,7 @@ public class Response implements Serializable {
     @Serial
     private final static long serialVersionUID = 9511113;
 
-    private String description;
+    private final String description;
     public Response(String description) {
         this.description = description;
     }

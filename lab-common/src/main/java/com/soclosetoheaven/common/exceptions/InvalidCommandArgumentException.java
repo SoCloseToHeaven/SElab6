@@ -11,14 +11,16 @@ public class InvalidCommandArgumentException extends RuntimeException{
      * default constructor
      */
 
-    public InvalidCommandArgumentException(){}
+    public InvalidCommandArgumentException(){
+        super("Invalid command arguments");
+    }
 
     /**
      * @param message exception message
      */
 
     public InvalidCommandArgumentException(String message) {
-        super("%s - %s".formatted(message, "Invalid arguments"));
+        super("%s - %s".formatted(message, "Invalid command arguments"));
     }
 
 }

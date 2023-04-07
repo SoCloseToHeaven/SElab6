@@ -15,8 +15,7 @@ public class ResponseWithException extends Response {
     }
 
     public ResponseWithException(Exception e) {
-        super("SERVER RESPONDED WITH EXCEPTION");
-        this.e = e;
+        this("SERVER RESPONDED WITH EXCEPTION", e);
     }
 
     public Exception getException() {

@@ -1,8 +1,6 @@
 package com.soclosetoheaven.client;
 
 
-import java.io.IOException;
-
 /**
  * Client main-class
  */
@@ -19,7 +17,7 @@ public class ClientApp {
      * main method, runs ConsoleClient
      * @param args command-string arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         ClientInstance client = new ClientInstance();
         client.run();
     }

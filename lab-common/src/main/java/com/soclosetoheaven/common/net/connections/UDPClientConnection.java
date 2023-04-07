@@ -26,8 +26,6 @@ public class UDPClientConnection implements SimpleConnection<Response, Request> 
         connect(addr, port);
         buffer = ByteBuffer.allocate(BUFFER_SIZE);
         channel.configureBlocking(false); // non-blocking mode
-        channel.socket().setSoTimeout(CONNECTION_TIMEOUT);
-        //System.out.println(channel.isConnected());
     }
 
 
@@ -50,6 +48,7 @@ public class UDPClientConnection implements SimpleConnection<Response, Request> 
         long timeoutChecker = System.currentTimeMillis() + CONNECTION_TIMEOUT;
         // var is needed to check connection for timeout
         while (address == null && (timeoutChecker - System.currentTimeMillis()) >= 0) {
+            // желательно тут чёт написать клиенту, может быть точечки вывести
             address = channel.receive(buffer);
         }
         if (timeoutChecker < 0)

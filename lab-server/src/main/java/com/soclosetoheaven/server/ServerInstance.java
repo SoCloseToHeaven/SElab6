@@ -8,6 +8,7 @@ import com.soclosetoheaven.common.io.BasicIO;
 import com.soclosetoheaven.common.net.connections.UDPServerConnection;
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
+import org.apache.commons.lang3.SerializationException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class ServerInstance{
                 );
                 Response response = commandManager.manage(request);
                 connection.sendData(response);
-            } catch (IOException e) {
+            } catch (IOException e) { // add SerializationException later
                 ServerApp.LOGGER.severe("Exception: " + e.getMessage());
             } finally {
                 fcm.save();

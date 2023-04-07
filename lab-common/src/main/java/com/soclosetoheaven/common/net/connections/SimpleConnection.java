@@ -4,15 +4,13 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.List;
 
-public interface SimpleConnection<getT, sendT> {
+public interface SimpleConnection<getT extends Serializable, sendT extends Serializable> {
     int CONNECTION_TIMEOUT = 5_000; // 5 seconds
     int BUFFER_SIZE = 8192; // public static final
     int MAX_PACKET_SIZE = BUFFER_SIZE - 1; // public static final
-    /*void start();*/
 
     getT waitAndGetData() throws IOException;
 

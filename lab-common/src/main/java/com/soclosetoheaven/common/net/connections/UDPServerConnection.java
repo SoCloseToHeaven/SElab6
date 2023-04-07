@@ -2,6 +2,7 @@ package com.soclosetoheaven.common.net.connections;
 
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
@@ -25,7 +26,6 @@ public class UDPServerConnection implements SimpleConnection<Request, Response> 
         socket = new DatagramSocket(port);
         socket.setReuseAddress(true); // needed for IP multicasting
         buffer = new byte[BUFFER_SIZE];
-        //socket.setSoTimeout(CONNECTION_TIMEOUT);
     }
 
 
@@ -36,15 +36,24 @@ public class UDPServerConnection implements SimpleConnection<Request, Response> 
             clearBuffer();
             DatagramPacket packet = new DatagramPacket(buffer, MAX_PACKET_SIZE);
             socket.receive(packet);
-            connect(packet.getAddress().getHostAddress(), packet.getPort()); // временный костыль
+            connect(packet.getAddress().getHostAddress(), packet.getPort());
             buffers.add(buffer);
         } while (buffer.length == MAX_PACKET_SIZE);
         byte[] data = transformPackagesToData(buffers);
-        return SerializationUtils.deserialize(data);
+        try {
+            Request request = SerializationUtils.deserialize(data);
+            return request;
+        } catch (SerializationException | ClassCastException e) {
+            disconnect();
+            throw new IOException(e);
+        }
+        //return SerializationUtils.deserialize(data);
     }
 
     @Override
     public void sendData(Response response) throws IOException{
+        if (!socket.isConnected())
+            return;
         byte[][] packets = transformDataToPackages(response);
 
         for (byte[] pac : packets) {

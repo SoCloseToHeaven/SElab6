@@ -10,6 +10,7 @@ import com.soclosetoheaven.common.net.connections.UDPClientConnection;
 import com.soclosetoheaven.common.net.messaging.Request;
 import com.soclosetoheaven.common.net.messaging.Response;
 import com.soclosetoheaven.common.util.TerminalColors;
+import org.apache.commons.lang3.SerializationException;
 
 import java.io.IOException;
 import java.net.PortUnreachableException;
@@ -20,7 +21,7 @@ import java.net.PortUnreachableException;
 public class ClientInstance {
     private final BasicIO io;
 
-    private final UDPClientConnection connection;
+    private UDPClientConnection connection;
 
     private final ClientCommandManager commandManager;
 
@@ -33,14 +34,20 @@ public class ClientInstance {
 
 
 
-    public ClientInstance() throws IOException {
+    public ClientInstance() {
         this.io = new BasicIO();
-        this.connection = new UDPClientConnection("localhost", 34684);
         this.commandManager = ClientCommandManager.defaultManager(io);
     }
 
 
     public void run() {
+        try {
+            connection = new UDPClientConnection("localhost", 34684);
+        } catch (IOException e) {
+            io.writeErr(e.getMessage());
+            io.writeErr("No option to continue work of client application!");
+            System.exit(-29);
+        }
         String input;
         while ((input = io.read(INPUT_PREFIX)) != null) {
             try {
@@ -57,7 +64,8 @@ public class ClientInstance {
             } catch (IOException |
                      UnknownCommandException |
                      InvalidCommandArgumentException |
-                     ExecutingScriptException e) {
+                     ExecutingScriptException |
+                     SerializationException e) {
                 io.writeErr(e.getMessage());
             }
         }
