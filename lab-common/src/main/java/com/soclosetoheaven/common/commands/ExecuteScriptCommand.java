@@ -43,6 +43,7 @@ public class ExecuteScriptCommand extends AbstractCommand{
                     ExecuteScriptCommand.OPENED_FILES.remove(file);
                 }
             };
+            OPENED_FILES.add(file);
             io.add(reader);
         } catch (IOException e) {
             throw new ExecutingScriptException(e.getMessage());

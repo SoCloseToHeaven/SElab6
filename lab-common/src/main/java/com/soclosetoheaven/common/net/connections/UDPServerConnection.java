@@ -42,6 +42,8 @@ public class UDPServerConnection implements SimpleConnection<Request, Response> 
         byte[] data = transformPackagesToData(buffers);
         try {
             Request request = SerializationUtils.deserialize(data);
+            if (request == null)
+                throw new IOException("Received null request");
             return request;
         } catch (SerializationException | ClassCastException e) {
             disconnect();

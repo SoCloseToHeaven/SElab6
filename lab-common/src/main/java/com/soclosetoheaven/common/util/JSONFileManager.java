@@ -37,6 +37,8 @@ public class JSONFileManager {
      * @throws FileNotFoundException if file doesn't exist
      */
     public JSONFileManager(String inputFileName) throws FileNotFoundException{
+        if (inputFileName == null)
+            throw new FileNotFoundException("File with name/path: %s doesn't exist".formatted(inputFileName));
         file = new File(inputFileName);
         if (!file.exists())
             throw new FileNotFoundException("File with name/path: %s doesn't exist".formatted(inputFileName));
@@ -58,7 +60,7 @@ public class JSONFileManager {
             });
             return dragons;
         } catch (IOException | JsonParseException e) {
-            System.err.printf("%s: %s%n", e.getMessage(), "empty collection created" );
+            System.err.printf("%s: %s%n", e.getMessage(), "empty collection created" ); // restruct later
         }
         return new ArrayList<>();
     }

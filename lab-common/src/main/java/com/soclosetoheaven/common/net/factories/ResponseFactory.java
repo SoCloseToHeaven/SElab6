@@ -2,7 +2,6 @@ package com.soclosetoheaven.common.net.factories;
 
 import com.soclosetoheaven.common.models.Dragon;
 import com.soclosetoheaven.common.net.messaging.Response;
-import com.soclosetoheaven.common.net.messaging.ResponseWithDragons;
 import com.soclosetoheaven.common.net.messaging.ResponseWithException;
 
 public class ResponseFactory {
@@ -19,8 +18,5 @@ public class ResponseFactory {
         return new ResponseWithException(e);
     }
 
-    public static Response createResponseWithDragons(String description, Dragon[] dragons) {
-        return new ResponseWithDragons(description, dragons);
-    }
 
 }
